@@ -49,9 +49,9 @@ Se trata de un simulador de cajero automatico del tipo ATM.
   
 	-El script modifica el DOM para mostrar elementos como formularios, mensajes de resultado y el historial de transacciones. También detecta eventos de usuario, como clics en botones, para ejecutar acciones correspondientes.
 
--Manejo de promesas con fetch. 
+-Manejo de promesas con fetch y asincronía. 
   
-	-Se utilizan promesas en la funcion de pago de servicios
+	-Se utilizó la función fetch para cargar datos estáticos desde un archivo JSON local, como las facturas, y se trabajó con asincronía para manejar las respuestas de las solicitudes y actualizar la interfaz en consecuencia.
 
 -Carga de datos desde un JSON local o desde una API externa.
   
