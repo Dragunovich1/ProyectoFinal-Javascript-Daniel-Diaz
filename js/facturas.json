@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "tipo": "Electricidad",
+    "monto": 4500,
+    "fecha": "2024-02-15",
+    "pagado": true
+  },
+  {
+    "id": 2,
+    "tipo": "Agua",
+    "monto": 4000,
+    "fecha": "2024-02-10",
+    "pagado": false
+  },
+  {
+    "id": 3,
+    "tipo": "Internet",
+    "monto": 10000,
+    "fecha": "2024-02-05",
+    "pagado": true
+  },
+    {
+    "id": 4,
+    "tipo": "Gas",
+    "monto": 5000,
+    "fecha": "2024-02-05",
+    "pagado": false
+  }
+]

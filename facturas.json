@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "tipo": "Electricidad",
+    "monto": 4500,
+    "fecha": "15-02-24",
+    "pagado": false
+  },
+  {
+    "id": 2,
+    "tipo": "Agua",
+    "monto": 4000,
+    "fecha": "10-02-24",
+    "pagado": false
+  },
+  {
+    "id": 3,
+    "tipo": "Internet",
+    "monto": 10000,
+    "fecha": "05-02-24",
+    "pagado": false
+  },
+    {
+    "id": 4,
+    "tipo": "Gas",
+    "monto": 5000,
+    "fecha": "08-02-24",
+    "pagado": false
+  },
+    {
+    "id": 5,
+    "tipo": "Tasa Municipal",
+    "monto": 3000,
+    "fecha": "05-02-24",
+    "pagado": false
+  },
+    {
+    "id": 6,
+    "tipo": "Patente Vehiculo",
+    "monto": 5000,
+    "fecha": "12-02-24",
+    "pagado": false
+  }
+]
