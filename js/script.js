@@ -312,7 +312,7 @@ function mostrarPantallaPagoServicios() {
 
     // Cargar y mostrar las facturas de servicios
     cargarFacturasDeServicios();
-
+    
     // Limpiar los botones anteriores
     limpiarBotonesPagoServicios();
     
@@ -337,7 +337,6 @@ function limpiarBotonesPagoServicios() {
         boton.remove();
     });
 }
-
 
 function cargarFacturasDeServicios() {
     fetch('facturas.json')
@@ -368,64 +367,92 @@ function cargarFacturasDeServicios() {
         .catch(error => console.error('Error al cargar el archivo JSON:', error));
 }
 
-function pagarServicios() {
-    let facturasSeleccionadas = obtenerFacturasSeleccionadas();
-    let totalFacturas = calcularTotalFacturas(facturasSeleccionadas);
+async function pagarServicios() {
+  try {
+    // Obtener las facturas seleccionadas
+    const facturasSeleccionadas = await obtenerFacturasSeleccionadas();
 
+    // Calcular el total a pagar
+    const totalFacturas = calcularTotalFacturas(facturasSeleccionadas);
+
+    // Verificar si el saldo del cliente es suficiente
     if (totalFacturas > cliente.saldo) {
-        mostrarMensaje("Saldo en cuenta insuficiente para realizar el pago.", 'error');
-    } else {
-        cliente.saldo -= totalFacturas;
-        registrarPagoEnHistorial(facturasSeleccionadas);
-        mostrarMensaje("Pago de servicios realizado correctamente.", 'success');
-        regresarMenuPrincipal();
-        guardarDatosClienteEnLocalStorage();
-        guardarHistorialTransaccionesEnLocalStorage();
+      // Mostrar un mensaje de error
+      mostrarMensaje("Saldo en cuenta insuficiente para realizar el pago.", "error");
+      return;
     }
+
+    // Restar el total a pagar del saldo del cliente
+    cliente.saldo -= totalFacturas;
+
+    // Registrar el pago en el historial de transacciones
+    registrarPagoEnHistorial(facturasSeleccionadas);
+
+    // Mostrar un mensaje de éxito
+    mostrarMensaje("Pago de servicios realizado correctamente.", "success");
+
+    // Regresar al menú principal
+    regresarMenuPrincipal();
+
+    // Guardar los datos del cliente en Local Storage
+    guardarDatosClienteEnLocalStorage();
+
+    // Guardar el historial de transacciones en Local Storage
+    guardarHistorialTransaccionesEnLocalStorage();
+  } catch (error) {
+    // Manejar cualquier error que ocurra
+    console.error('Error al pagar servicios:', error);
+    mostrarMensaje("Error al pagar servicios. Por favor, inténtalo de nuevo.", "error");
+  }
 }
 
-function obtenerFacturasSeleccionadas() {
-    let facturasSeleccionadas = [];
-    let checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
 
-    checkboxes.forEach(checkbox => {
-        let facturaId = parseInt(checkbox.value);
-        let factura = obtenerFacturaPorId(facturaId);
-        facturasSeleccionadas.push(factura);
-    });
+async function obtenerFacturasSeleccionadas() {
+  // Obtener todos los checkboxes seleccionados
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
 
-    return facturasSeleccionadas;
+  // Convertir la lista de checkboxes a un array
+  const facturasSeleccionadas = Array.from(checkboxes).map(async checkbox => {
+    // Obtener el ID de la factura
+    const facturaId = parseInt(checkbox.value);
+
+    // Obtener la factura por ID
+    return await obtenerFacturaPorId(facturaId);
+  });
+
+  // Esperar a que todas las promesas se resuelvan y devolver el array de facturas
+  return Promise.all(facturasSeleccionadas);
 }
+
 
 function calcularTotalFacturas(facturas) {
-    let total = 0;
-    facturas.forEach(factura => {
-        total += factura.monto;
-    });
+    // Reducir el array de facturas a un solo valor, sumando el monto de cada factura
+    const total = facturas.reduce((acumulador, factura) => acumulador + parseInt(factura.monto), 0);
     return total;
 }
 
-function obtenerFacturaPorId(id) {
-    // Realizar una solicitud fetch para obtener los datos del archivo JSON
-    return fetch('facturas.json')
-        .then(response => response.json())
-        .then(data => {
-            // Buscar la factura con el ID proporcionado
-            const facturaEncontrada = data.find(factura => factura.id === id);
-            // Devolver la factura encontrada
-            return facturaEncontrada;
-        })
-        .catch(error => {
-            console.error('Error al cargar el archivo JSON:', error);
-            return null; // Devolver null en caso de error
-        });
+
+async function obtenerFacturaPorId(id) {
+    // Obtener la respuesta de la API
+    const response = await fetch('facturas.json');
+
+    // Convertir la respuesta a JSON
+    const data = await response.json();
+
+    // Encontrar la factura con el ID especificado
+    return data.find(factura => factura.id === id);
 }
 
-
 function registrarPagoEnHistorial(facturas) {
+    // Registrar cada factura como un pago en el historial
     facturas.forEach(factura => {
+        // Tipo de transacción: "Pago de" + tipo de factura
         let tipo = `Pago de ${factura.tipo}`;
-        let monto = -factura.monto; // El monto se registra como negativo para indicar un pago
+
+        // Monto de la transacción (negativo para indicar un pago)
+        let monto = -factura.monto;
+
+        // Registrar la transacción
         registrarTransaccion(tipo, monto);
     });
 }
